@@ -7,7 +7,7 @@ use App\Services\AsyncEmail\DataTransferObjects\OutgoingEmailDTO;
 use Exception;
 use Tests\TestCase;
 
-class EmailDTOTest extends TestCase
+class OutgoingEmailDTOTest extends TestCase
 {
     /**
      * @throws Exception
