@@ -1,0 +1,50 @@
+version: "3.8"
+services:
+
+  php-fpm:
+    container_name: tem-php
+    build:
+      context: ./docker/php
+      dockerfile: php.Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - ./src:/var/www
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+
+  mariadb:
+    container_name: tem-mariadb
+    image: mariadb:10.10
+    environment:
+      - MARIADB_ROOT_PASSWORD=${DB_PASSWORD}
+      - MARIADB_USER=${DB_USERNAME}
+      - MARIADB_DATABASE=${DB_DATABASE}
+      - TZ=UTC
+    volumes:
+      - ./.data/mariadb:/var/lib/mysql
+
+  phpmyadmin:
+    container_name: tem-pma
+    image: phpmyadmin/phpmyadmin:5.2.0
+    environment:
+      - PMA_HOST=${DB_HOST}
+      - PMA_ABSOLUTE_URI=/phpmyadmin/
+
+  rabbitmq:
+    container_name: tem-rabbitmq
+    image: rabbitmq:3.11-alpine
+    volumes:
+      - ./.data/rabbitmq:/var/lib/rabbitmq/mnesia
+
+  nginx:
+    container_name: tem-nginx
+    image: nginx:1.22-alpine
+    depends_on:
+      - php-fpm
+      - phpmyadmin
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src/public:/var/www/public
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+
