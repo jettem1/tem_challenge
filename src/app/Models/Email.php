@@ -4,6 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property string $created_at
+ * @property string $updated_at
+ * @property string $recipient
+ * @property string $subject
+ * @property string $body
+ * @property int $status
+ */
 class Email extends Model
 {
     public const STATUS_FAILED = -1;
