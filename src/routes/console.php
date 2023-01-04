@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
+use App\Exceptions\ValidationException;
+use App\Services\AsyncEmail\DataTransferObjects\OutgoingEmailDTO;
 use Illuminate\Support\Facades\Artisan;
 
 /*
@@ -16,4 +17,22 @@ use Illuminate\Support\Facades\Artisan;
 
 Artisan::command('test', function () {
     $this->comment('Test command executed successfully!');
+});
+
+Artisan::command('
+        mail:send 
+        {--recipient=* : One or more recipients} 
+        {--subject= : Email subject}
+        {--body= : Email body}
+        ', function () {
+
+    try {
+        $outgoingEmailDTO = new OutgoingEmailDTO($this->option('recipient'), $this->option('subject'), $this->option('body'));
+    } catch (ValidationException $e) {
+        return $this->error('Error: ' . $e->getMessage());
+    }
+
+    //TODO: send the mail
+
+    $this->info('OK');
 });
