@@ -16,7 +16,9 @@ class MailJetEmailTransport implements IEmailTransport
     public function __construct(string $key, string $secret, string $senderEmail)
     {
         $this->mailJetClient = new Client($key, $secret, true, ['version' => 'v3.1']);
-        $this->senderEmail   = $senderEmail;
+        $this->mailJetClient->setConnectionTimeout(10);
+
+        $this->senderEmail = $senderEmail;
     }
 
     public function send(Email $email): bool
