@@ -1,7 +1,10 @@
 <?php
 
+use App\Exceptions\ValidationException;
+use App\Services\AsyncEmail\DataTransferObjects\OutgoingEmailDTO;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +20,15 @@ Route::get('/test', function (Request $request) {
     return 'Test API route';
 });
 
+Route::post('/send-mail', function (Request $request) {
+
+    try {
+        $outgoingEmailDTO = new OutgoingEmailDTO($request->get('recipients'), $request->get('subject'), $request->get('body'));
+    } catch (ValidationException $e) {
+        return response(['error' => $e->getMessage()], ResponseAlias::HTTP_BAD_REQUEST);
+    }
+
+    //TODO: send the mail
+
+    return response('OK');
+});
