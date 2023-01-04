@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Exceptions\EmailException;
 use App\Models\Email;
 use App\Services\AsyncEmail\AsyncEmailService;
+use App\Services\AsyncEmail\DataTransferObjects\OutgoingEmailDTO;
 use App\Services\AsyncEmail\Transport\IEmailTransport;
 use Exception;
 use Tests\TestCase;
@@ -147,6 +148,44 @@ class AsyncEmailServiceTest extends TestCase
 
         $asyncEmailService->sendEmail($this->emailRecord);
         $this->assertEquals(Email::STATUS_FAILED, $this->emailRecord->status);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function test_storeAndQueueEmails_Throws_On_Invalid_Data()
+    {
+        $this->withoutJobs();
+
+        $asyncEmailService = new AsyncEmailService();
+
+        $outgoingEmailDto = $this->getMockBuilder(OutgoingEmailDTO::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $outgoingEmailDto->expects($this->any())->method('getRecipients')->willReturn([null]);
+
+        $this->expectException(EmailException::class);
+        $asyncEmailService->storeAndQueueEmails($outgoingEmailDto);
+
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function test_storeAndQueueEmails_Saves_Records_On_Success()
+    {
+        $this->withoutJobs();
+
+        $asyncEmailService = new AsyncEmailService();
+
+        $recipientCount = 5;
+        $recipients     = array_fill(0, $recipientCount, $this->faker->email);
+
+        $outgoingEmailDto = new OutgoingEmailDTO($recipients, $this->faker->country, $this->faker->paragraph);
+
+        $emailIds = $asyncEmailService->storeAndQueueEmails($outgoingEmailDto);
+
+        $this->assertCount($recipientCount, $emailIds);
     }
 
 }
