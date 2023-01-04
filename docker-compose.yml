@@ -30,12 +30,6 @@ services:
       - PMA_HOST=${DB_HOST}
       - PMA_ABSOLUTE_URI=/phpmyadmin/
 
-  rabbitmq:
-    container_name: tem-rabbitmq
-    image: rabbitmq:3.11-alpine
-    volumes:
-      - ./.data/rabbitmq:/var/lib/rabbitmq/mnesia
-
   nginx:
     container_name: tem-nginx
     image: nginx:1.22-alpine
