@@ -7,6 +7,7 @@ use App\Models\Email;
 use App\Services\AsyncEmail\DataTransferObjects\OutgoingEmailDTO;
 use App\Services\AsyncEmail\Transport\IEmailTransport;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use PDOException;
 
 class AsyncEmailService
@@ -88,6 +89,9 @@ class AsyncEmailService
             if ($isSent) {
                 $email->status = Email::STATUS_SENT;
                 $email->save();
+
+                Log::info('[Email: ' . $email->id . '] Sent OK.');
+
                 return true;
             }
         }
@@ -98,6 +102,8 @@ class AsyncEmailService
          */
         $email->status = Email::STATUS_FAILED;
         $email->save();
+
+        Log::warning('[Email: ' . $email->id . '] Failed to send.');
 
         return false;
     }
