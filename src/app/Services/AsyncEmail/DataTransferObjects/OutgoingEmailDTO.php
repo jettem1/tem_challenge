@@ -4,25 +4,39 @@ namespace App\Services\AsyncEmail\DataTransferObjects;
 
 use App\Exceptions\ValidationException;
 use Exception;
+use Parsedown;
 
 class OutgoingEmailDTO
 {
+    public const FORMAT_TEXT = 'text';
+    public const FORMAT_HTML = 'html';
+    public const FORMAT_MARKDOWN = 'markdown';
+
+    public const VALID_FORMATS = [self::FORMAT_TEXT, self::FORMAT_HTML, self::FORMAT_MARKDOWN];
+
     private $recipients;
 
     private $subject;
 
     private $body;
 
+    private $format;
+
     /**
      * @throws Exception
      */
-    public function __construct($recipients, $subject, $body)
+    public function __construct($recipients, $subject, $body, $format)
     {
         $this->recipients = $recipients;
         $this->subject    = $subject;
         $this->body       = $body;
+        $this->format     = $format ?? self::FORMAT_TEXT;
 
         $this->validateOrThrow();
+
+        if ($this->getFormat() == self::FORMAT_MARKDOWN) {
+            $this->body = $this->convertMarkdownToHtml($this->body);
+        }
     }
 
     public function getRecipients()
@@ -38,6 +52,11 @@ class OutgoingEmailDTO
     public function getBody()
     {
         return $this->body;
+    }
+
+    public function getFormat()
+    {
+        return $this->format;
     }
 
     /**
@@ -66,6 +85,15 @@ class OutgoingEmailDTO
         if (empty($this->getBody())) {
             throw new ValidationException('Body can not be empty');
         }
+
+        if (!in_array($this->getFormat(), self::VALID_FORMATS)) {
+            throw new ValidationException('Invalid format. Must be one of: text, html, markdown.');
+        }
+
     }
 
+    private function convertMarkdownToHtml($body): string
+    {
+        return ((new Parsedown())->text($body));
+    }
 }

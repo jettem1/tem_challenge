@@ -26,10 +26,11 @@ Artisan::command('
         {--recipient=* : One or more recipients} 
         {--subject= : Email subject}
         {--body= : Email body}
+        {--format= : Format of the "body"}
         ', function () {
 
     try {
-        $outgoingEmailDTO = new OutgoingEmailDTO($this->option('recipient'), $this->option('subject'), $this->option('body'));
+        $outgoingEmailDTO = new OutgoingEmailDTO($this->option('recipient'), $this->option('subject'), $this->option('body'), $this->option('format'));
 
         /**
          * @var AsyncEmailService $asyncEmailService

@@ -25,7 +25,7 @@ Route::get('/test', function (Request $request) {
 Route::post('/send-mail', function (Request $request) {
 
     try {
-        $outgoingEmailDTO = new OutgoingEmailDTO($request->get('recipients'), $request->get('subject'), $request->get('body'));
+        $outgoingEmailDTO = new OutgoingEmailDTO($request->get('recipients'), $request->get('subject'), $request->get('body'),  $request->get('format'));
 
         /**
          * @var AsyncEmailService $asyncEmailService
