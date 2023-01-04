@@ -3,6 +3,7 @@
 namespace App\Services\AsyncEmail;
 
 use App\Exceptions\EmailException;
+use App\Jobs\EmailSender;
 use App\Models\Email;
 use App\Services\AsyncEmail\DataTransferObjects\OutgoingEmailDTO;
 use App\Services\AsyncEmail\Transport\IEmailTransport;
@@ -47,7 +48,7 @@ class AsyncEmailService
 
                 $emailIds[] = $email->id;
 
-                //TODO: add $email->id to Queue to be sent later
+                EmailSender::dispatch($email);
 
             } catch (PDOException $e) {
                 DB::rollBack();
