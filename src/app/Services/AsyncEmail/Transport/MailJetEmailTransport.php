@@ -35,7 +35,7 @@ class MailJetEmailTransport implements IEmailTransport
                         ]
                     ],
                     'Subject' => $email->subject,
-                    'TextPart' => $email->body,
+                    'HTMLPart' => $email->body,
                 ]
             ]
         ];

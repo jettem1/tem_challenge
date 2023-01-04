@@ -27,7 +27,7 @@ class SendGridEmailTransport implements IEmailTransport
             $sendGridEmail->setFrom($this->senderEmail);
             $sendGridEmail->setSubject($email->subject);
             $sendGridEmail->addTo($email->recipient);
-            $sendGridEmail->addContent("text/plain", $email->body);
+            $sendGridEmail->addContent("text/html", $email->body);
 
             $response = $this->sendGridClient->send($sendGridEmail);
 
