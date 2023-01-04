@@ -25,7 +25,7 @@ class OutgoingEmailDTO
     /**
      * @throws Exception
      */
-    public function __construct($recipients, $subject, $body, $format)
+    public function __construct($recipients, $subject, $body, $format = self::FORMAT_TEXT)
     {
         $this->recipients = $recipients;
         $this->subject    = $subject;
