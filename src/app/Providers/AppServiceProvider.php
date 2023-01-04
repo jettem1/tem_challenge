@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Services\AsyncEmail\AsyncEmailService;
+use App\Services\AsyncEmail\Transport\MailJetEmailTransport;
+use App\Services\AsyncEmail\Transport\SendGridEmailTransport;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -16,7 +18,17 @@ class AppServiceProvider extends ServiceProvider
     {
         //Register AsyncEmail service
         $this->app->singleton(AsyncEmailService::class, function () {
-            return new AsyncEmailService();
+
+            $asyncEmailService = new AsyncEmailService();
+
+            $asyncEmailService->addEmailTransport((new MailJetEmailTransport(
+                config('asyncemail.mailjet.key'), config('asyncemail.mailjet.secret'), config('asyncemail.mailjet.senderEmail'))));
+
+            $asyncEmailService->addEmailTransport((new SendGridEmailTransport(
+                config('asyncemail.sendgrid.apiKey'), config('asyncemail.mailjet.senderEmail'))));
+
+
+            return $asyncEmailService;
         });
     }
 
